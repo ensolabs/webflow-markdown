@@ -1,8 +1,8 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, div, h1, input, label, node, text, textarea)
-import Html.Attributes exposing (autofocus, class, href, name, placeholder, rel, style, value)
+import Html.Attributes exposing (autofocus, class, href, id, name, placeholder, rel, style, value)
 import Html.Events exposing (..)
 import Markdown
 
@@ -47,6 +47,7 @@ type Msg
     = UpdateMarkdown String
     | UpdateStylesheet String
     | UpdateContentClassName String
+    | CopyToClipboard
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -73,6 +74,9 @@ update msg model =
             , Cmd.none
             )
 
+        CopyToClipboard ->
+            ( model, triggerCopy htmlOutputId )
+
 
 
 -- SUBSCRIPTIONS
@@ -81,6 +85,13 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.none
+
+
+
+-- PORTS
+
+
+port triggerCopy : String -> Cmd msg
 
 
 
@@ -127,9 +138,12 @@ view title model =
             -- Right column: HTML output
             , panel "HTML Preview"
                 [ div
-                    (class
-                        model.contentClassName
-                        :: contentStylesFullFlexHeight
+                    ([ class model.contentClassName
+                     , style "cursor" "pointer"
+                     , onClick CopyToClipboard
+                     , id htmlOutputId
+                     ]
+                        ++ contentStylesFullFlexHeight
                     )
                   <|
                     Markdown.toHtml
@@ -231,6 +245,15 @@ stylesheetInput stylesheet =
             Nothing ->
                 text ""
         ]
+
+
+
+-- CONSTANTS
+
+
+htmlOutputId : String
+htmlOutputId =
+    "html-output"
 
 
 placeholderMarkdown : String
