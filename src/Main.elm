@@ -14,7 +14,7 @@ import Markdown
 main : Program () Model Msg
 main =
     Browser.document
-        { init = \_ -> init placeholderMarkdown "https://cdn.prod.website-files.com/6214c874431e5f067201a098/css/enso-70214f.d81fe3c7e.css" "w-embed"
+        { init = \_ -> init placeholderMarkdown "https://cdn.prod.website-files.com/6214c874431e5f067201a098/css/enso-70214f.d81fe3c7e.css" "rich-text article-body w-richtext"
         , update = update
         , subscriptions = subscriptions
         , view = view "Markdown to HTML"
