@@ -92,29 +92,29 @@ view title model =
     { title = title
     , body =
         [ topBar
-            [ h1 [] [ text title ]
-            , stylesheetInput model.stylesheet
+            [ stylesheetInput model.stylesheet
             , customInput
                 model.contentClassName
-                "Content class name(s) (optional):"
+                "Content class name(s):"
                 UpdateContentClassName
+                []
             ]
         , div
             [ style "width" "100vw"
             , style "height" "100%"
             , style "display" "flex"
-            , style "flex-wrap" "wrap"
             , style "align-items" "flex-start"
             , style "justify-content" "center"
+            , style "overflow" "hidden"
             ]
             [ -- Left column: Markdown input
               panel "Markdown Input"
                 [ textarea
-                    ([ revertStyle
-                     , style "width" "100%"
-                     , style "min-height" "100%"
+                    ([ style "width" "100%"
                      , style "font-family" "monospace"
-                     , style "overflow-x" "scroll"
+                     , style "font-size" "1rem"
+                     , style "display" "flex"
+                     , style "field-sizing" "normal"
                      , value model.markdownInput
                      , onInput UpdateMarkdown
                      , autofocus True
@@ -147,11 +147,9 @@ panel title content =
         [ style "flex" "1"
         , style "padding" "1rem"
         , style "min-width" "300px"
-        , style "overflow-y" "auto"
         , style "min-height" "calc(100vh - 100px)"
-        , style "display" "flex"
         , style "flex-direction" "column"
-        , style "gap" "1rem"
+        , style "display" "flex"
         ]
         (h1 [ revertStyle ] [ text title ] :: content)
 
@@ -161,7 +159,8 @@ topBar content =
     div
         [ revertStyle
         , style "display" "flex"
-        , style "background-color" "white"
+        , style "gap" "1rem"
+        , style "background-color" "rgba(255, 255, 255, 0.8)"
         , style "justify-content" "space-between"
         , style "align-items" "center"
         , style "position" "sticky"
@@ -189,34 +188,39 @@ contentStyles =
 
 contentStylesFullFlexHeight : List (Html.Attribute msg)
 contentStylesFullFlexHeight =
-    style "flex" "1" :: contentStyles
+    [ style "flex" "1"
+    , style "min-height" "100%"
+    ]
+        ++ contentStyles
 
 
-customInput : String -> String -> (String -> msg) -> Html msg
-customInput inputValue labelText onInputHandler =
-    label [ name labelText ]
-        [ div [] [ text labelText ]
-        , input
-            ([ value inputValue
-             , onInput onInputHandler
-             , placeholder labelText
-             , style "overflow-x" "scroll"
-             , style "width" "100%"
-             ]
-                ++ contentStyles
+customInput : String -> String -> (String -> msg) -> List (Html msg) -> Html msg
+customInput inputValue labelText onInputHandler additionalElements =
+    label [ name labelText, style "flex" "1", style "width" "100%" ]
+        ([ div [] [ text labelText ]
+         , input
+            (contentStyles
+                ++ [ value inputValue
+                   , onInput onInputHandler
+                   , placeholder labelText
+                   , style "overflow-x" "scroll"
+                   , style "min-width" "360px"
+                   , style "padding" "0 0.5rem"
+                   ]
             )
             []
-        ]
+         ]
+            ++ additionalElements
+        )
 
 
 stylesheetInput : Maybe String -> Html Msg
 stylesheetInput stylesheet =
-    div []
-        [ customInput
-            (Maybe.withDefault "" stylesheet)
-            "Enter a stylesheet URL (optional):"
-            UpdateStylesheet
-        , case stylesheet of
+    customInput
+        (Maybe.withDefault "" stylesheet)
+        "Stylesheet URL:"
+        UpdateStylesheet
+        [ case stylesheet of
             Just url ->
                 node "link"
                     [ href url
@@ -231,7 +235,8 @@ stylesheetInput stylesheet =
 
 placeholderMarkdown : String
 placeholderMarkdown =
-    """
+    String.trimLeft
+        """
 ## The best tool for note-taking?
 
 The one you have close at hand. ReMarkable this, vintage inherited bio-dynamic paper that – it'll do you no good what-so-ever if it's not readily available when you need it. I've spent way too much time trying to find the "ideal" solution for keeping track of notes and ideas through my workday. But all I _really_ need is this:
@@ -258,7 +263,5 @@ $ npm install -g ripnote
 #### And then:
 
 ![ripnote](https://github.com/cekrem/ripnote/raw/main/screenshot.gif)
-
-
 
 """
