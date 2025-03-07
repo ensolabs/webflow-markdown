@@ -14,7 +14,12 @@ import Markdown
 main : Program () Model Msg
 main =
     Browser.document
-        { init = \_ -> init placeholderMarkdown "https://cdn.prod.website-files.com/6214c874431e5f067201a098/css/enso-70214f.d81fe3c7e.css" "rich-text article-body w-richtext"
+        { init =
+            \_ ->
+                init
+                    placeholderMarkdown
+                    "https://cdn.prod.website-files.com/6214c874431e5f067201a098/css/enso-70214f.d81fe3c7e.css"
+                    "rich-text article-body w-richtext"
         , update = update
         , subscriptions = subscriptions
         , view = view "Markdown to HTML"
@@ -116,12 +121,11 @@ view title model =
             , style "display" "flex"
             , style "align-items" "flex-start"
             , style "justify-content" "center"
-            , style "overflow" "hidden"
             ]
             [ -- Left column: Markdown input
               panel "Markdown Input"
                 [ textarea
-                    ([ style "width" "100%"
+                    ([ revertStyle
                      , style "font-family" "monospace"
                      , style "font-size" "1rem"
                      , style "display" "flex"
@@ -155,19 +159,6 @@ view title model =
     }
 
 
-panel : String -> List (Html msg) -> Html msg
-panel title content =
-    div
-        [ style "flex" "1"
-        , style "padding" "1rem"
-        , style "min-width" "300px"
-        , style "min-height" "calc(100vh - 100px)"
-        , style "flex-direction" "column"
-        , style "display" "flex"
-        ]
-        (h1 [ revertStyle ] [ text title ] :: content)
-
-
 topBar : List (Html msg) -> Html msg
 topBar content =
     div
@@ -183,6 +174,19 @@ topBar content =
         , style "padding" "1rem"
         ]
         content
+
+
+panel : String -> List (Html msg) -> Html msg
+panel title content =
+    div
+        [ style "flex" "1"
+        , style "padding" "1rem"
+        , style "min-width" "300px"
+        , style "min-height" "calc(100vh - 100px)"
+        , style "flex-direction" "column"
+        , style "display" "flex"
+        ]
+        (h1 [ revertStyle ] [ text title ] :: content)
 
 
 revertStyle : Html.Attribute msg

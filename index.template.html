@@ -11,19 +11,22 @@
     <script src="elm.js"></script>
     <script>
       // Initialize Elm application
-      var app = Elm.Main.init({
+      const app = Elm.Main.init({
         node: document.getElementById("elm-app"),
         flags: null,
       });
 
-      // Port subscriptions
-      app.ports.triggerCopy.subscribe(function (data) {
+      // Subscribe to the triggerCopy port
+      app.ports.triggerCopy.subscribe((id) => {
         const range = document.createRange();
-        range.selectNode(document.getElementById(data));
+        range.selectNode(document.getElementById(id));
 
+        // Select all text in the html output element
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
+
+        // Try to copy the selected text to the clipboard, keep selection if it fails
         document.execCommand("copy") && selection.removeAllRanges();
       });
 
