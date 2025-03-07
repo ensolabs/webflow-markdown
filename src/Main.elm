@@ -2,7 +2,7 @@ port module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, div, h1, input, label, node, text, textarea)
-import Html.Attributes exposing (autofocus, class, href, id, name, placeholder, rel, style, tabindex, value)
+import Html.Attributes exposing (autofocus, class, href, id, name, placeholder, rel, tabindex, value)
 import Html.Events exposing (..)
 import Markdown
 
@@ -115,50 +115,49 @@ view : String -> Model -> Document Msg
 view title model =
     { title = title
     , body =
-        [ topBar
-            [ stylesheetInput model.stylesheet
-            , customInput
-                model.contentClassName
-                "Content class name(s):"
-                UpdateContentClassName
-                []
-            ]
-        , div styles.mainLayout
-            [ -- Left column: Markdown input
-              panel "Markdown Input"
-                [ textarea
-                    (styles.markdownEditor
-                        ++ [ value model.markdownInput
-                           , onInput UpdateMarkdown
-                           , autofocus True
-                           ]
-                    )
+        [ div [ class "flex flex-col min-h-screen" ]
+            [ topBar
+                [ stylesheetInput model.stylesheet
+                , customInput
+                    model.contentClassName
+                    "Content class name(s):"
+                    UpdateContentClassName
                     []
                 ]
+            , div [ class "flex flex-1" ]
+                [ -- Left column: Markdown input
+                  panel "Markdown Input"
+                    [ textarea
+                        [ class "w-full h-full font-mono resize-none bg-transparent"
+                        , value model.markdownInput
+                        , onInput UpdateMarkdown
+                        , autofocus True
+                        ]
+                        []
+                    ]
 
-            -- Right column: HTML output
-            , panel "HTML Preview"
-                [ div
-                    (styles.htmlPreview
-                        ++ [ class model.contentClassName
-                           , onClick CopyToClipboard
-                           , id htmlOutputId
-                           , tabindex 1
-                           , onBlur (UpdateMarkdown model.markdownInput)
-                           ]
-                    )
-                  <|
-                    Markdown.toHtml
-                        Nothing
-                        model.markdownInput
-                        ++ (if model.showCopySuccess then
-                                [ div styles.copySuccess
-                                    [ text "Copied to clipboard!" ]
-                                ]
+                -- Right column: HTML output
+                , panel "HTML Preview"
+                    [ div
+                        [ class (model.contentClassName ++ " w-full h-full cursor-pointer relative")
+                        , onClick CopyToClipboard
+                        , id htmlOutputId
+                        , tabindex 1
+                        , onBlur (UpdateMarkdown model.markdownInput)
+                        ]
+                      <|
+                        Markdown.toHtml
+                            Nothing
+                            model.markdownInput
+                            ++ (if model.showCopySuccess then
+                                    [ div [ class "absolute top-0 margin-auto p-4 bg-white/80 rounded" ]
+                                        [ text "Copied to clipboard!" ]
+                                    ]
 
-                            else
-                                []
-                           )
+                                else
+                                    []
+                               )
+                    ]
                 ]
             ]
         ]
@@ -167,26 +166,27 @@ view title model =
 
 topBar : List (Html msg) -> Html msg
 topBar content =
-    div styles.topBar content
+    div [ class "sticky top-0 z-10 flex justify-between gap-8 items-center p-4 bg-white/80" ] content
 
 
 panel : String -> List (Html msg) -> Html msg
 panel title content =
-    div styles.flexPanel
-        (h1 styles.reset [ text title ] :: content)
+    div [ class "w-1/2 p-4 flex flex-col" ]
+        (h1 [ class "mb-2" ] [ text title ]
+            :: List.map (\c -> div [ class "flex-1 border rounded p-4" ] [ c ]) content
+        )
 
 
 customInput : String -> String -> (String -> msg) -> List (Html msg) -> Html msg
 customInput inputValue labelText onInputHandler additionalElements =
-    label (name labelText :: styles.inputLabel)
+    label [ name labelText, class "flex-1" ]
         ([ div [] [ text labelText ]
          , input
-            (styles.inputField
-                ++ [ value inputValue
-                   , onInput onInputHandler
-                   , placeholder labelText
-                   ]
-            )
+            [ class "w-full px-2 py-1 border rounded"
+            , value inputValue
+            , onInput onInputHandler
+            , placeholder labelText
+            ]
             []
          ]
             ++ additionalElements
@@ -210,133 +210,6 @@ stylesheetInput stylesheet =
             Nothing ->
                 text ""
         ]
-
-
-
--- STYLES
-
-
-type alias Style msg =
-    List (Html.Attribute msg)
-
-
-styles :
-    { reset : Style msg
-    , flex : Style msg
-    , column : Style msg
-    , fullWidth : Style msg
-    , container : Style msg
-    , flexGrow : Style msg
-    , flexPanel : Style msg
-    , contentArea : Style msg
-    , topBar : Style msg
-    , mainLayout : Style msg
-    , inputField : Style msg
-    , markdownEditor : Style msg
-    , htmlPreview : Style msg
-    , inputLabel : Style msg
-    , copySuccess : Style msg
-    }
-styles =
-    let
-        reset =
-            [ style "all" "revert" ]
-
-        flex =
-            [ style "display" "flex" ]
-
-        column =
-            flex ++ [ style "flex-direction" "column" ]
-
-        fullWidth =
-            [ style "width" "100%" ]
-
-        container =
-            [ style "border" "1px solid #ccc"
-            , style "border-radius" "0.5rem"
-            , style "padding" "1rem"
-            , style "box-sizing" "border-box"
-            ]
-                ++ fullWidth
-
-        flexGrow =
-            [ style "flex" "1" ]
-    in
-    { reset = reset
-    , flex = flex
-    , column = column
-    , fullWidth = fullWidth
-    , container = container
-    , flexGrow = flexGrow
-    , flexPanel =
-        flexGrow
-            ++ column
-            ++ [ style "padding" "1rem"
-               , style "min-width" "300px"
-               , style "min-height" "calc(100vh - 100px)"
-               ]
-    , contentArea =
-        container
-            ++ flexGrow
-            ++ [ style "min-height" "100%" ]
-    , topBar =
-        reset
-            ++ flex
-            ++ [ style "gap" "1rem"
-               , style "background-color" "rgba(255, 255, 255, 0.8)"
-               , style "justify-content" "space-between"
-               , style "align-items" "center"
-               , style "position" "sticky"
-               , style "top" "0"
-               , style "z-index" "100"
-               , style "padding" "1rem"
-               ]
-    , mainLayout =
-        [ style "width" "100vw"
-        , style "height" "100%"
-        ]
-            ++ flex
-            ++ [ style "align-items" "flex-start"
-               , style "justify-content" "center"
-               ]
-    , inputField =
-        container
-            ++ [ style "overflow-x" "scroll"
-               , style "min-width" "360px"
-               , style "padding" "0 0.5rem"
-               ]
-    , markdownEditor =
-        container
-            ++ flexGrow
-            ++ [ style "font-family" "monospace"
-               , style "min-height" "100%"
-               , style "height" "100%"
-               , style "font-size" "1rem"
-               , style "display" "block"
-               , style "box-sizing" "border-box"
-               , style "resize" "none"
-               , style "background" "none"
-               , style "field-sizing" "content"
-               ]
-    , htmlPreview =
-        container
-            ++ flexGrow
-            ++ [ style "min-height" "100%"
-               , style "cursor" "pointer"
-               , style "position" "relative"
-               ]
-    , inputLabel =
-        style "flex" "1" :: fullWidth
-    , copySuccess =
-        [ style "position" "absolute"
-        , style "top" "0"
-        , style "right" "0"
-        , style "padding" "1rem"
-        , style "background-color" "rgba(255, 255, 255, 0.8)"
-        , style "border-radius" "0.5rem"
-        , style "z-index" "100"
-        ]
-    }
 
 
 
