@@ -26,8 +26,16 @@
         selection.removeAllRanges();
         selection.addRange(range);
 
-        // Try to copy the selected text to the clipboard, keep selection if it fails
-        document.execCommand("copy") && selection.removeAllRanges();
+        // Try to copy the selected text to the clipboard
+        const successful = document.execCommand("copy");
+        if (successful) {
+          // Send notification back to Elm that copy was successful
+          app.ports.copySuccess.send(null);
+          // Remove selection after successful copy
+          selection.removeAllRanges();
+        } else {
+          console.error("Failed to copy text: ", err);
+        }
       });
 
       // Add any other JavaScript interop code here

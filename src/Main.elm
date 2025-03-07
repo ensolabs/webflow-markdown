@@ -34,12 +34,13 @@ type alias Model =
     { markdownInput : String
     , stylesheet : Maybe String
     , contentClassName : String
+    , showCopySuccess : Bool
     }
 
 
 init : String -> String -> String -> ( Model, Cmd msg )
 init markdown stylesheetUrl containerClassName =
-    ( Model markdown (Just stylesheetUrl) containerClassName
+    ( Model markdown (Just stylesheetUrl) containerClassName False
     , Cmd.none
     )
 
@@ -53,13 +54,14 @@ type Msg
     | UpdateStylesheet String
     | UpdateContentClassName String
     | CopyToClipboard
+    | CopySuccess
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         UpdateMarkdown newText ->
-            ( { model | markdownInput = newText }
+            ( { model | markdownInput = newText, showCopySuccess = False }
             , Cmd.none
             )
 
@@ -82,6 +84,9 @@ update msg model =
         CopyToClipboard ->
             ( model, triggerCopy htmlOutputId )
 
+        CopySuccess ->
+            ( { model | showCopySuccess = True }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -89,7 +94,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    copySuccess (\_ -> CopySuccess)
 
 
 
@@ -97,6 +102,9 @@ subscriptions _ =
 
 
 port triggerCopy : String -> Cmd msg
+
+
+port copySuccess : (() -> msg) -> Sub msg
 
 
 
@@ -141,6 +149,14 @@ view title model =
                     Markdown.toHtml
                         Nothing
                         model.markdownInput
+                        ++ (if model.showCopySuccess then
+                                [ div styles.copySuccess
+                                    [ text "Copied to clipboard!" ]
+                                ]
+
+                            else
+                                []
+                           )
                 ]
             ]
         ]
@@ -217,6 +233,7 @@ styles :
     , markdownEditor : Style msg
     , htmlPreview : Style msg
     , inputLabel : Style msg
+    , copySuccess : Style msg
     }
 styles =
     let
@@ -301,9 +318,19 @@ styles =
             ++ flexGrow
             ++ [ style "min-height" "100%"
                , style "cursor" "pointer"
+               , style "position" "relative"
                ]
     , inputLabel =
         style "flex" "1" :: fullWidth
+    , copySuccess =
+        [ style "position" "absolute"
+        , style "top" "0"
+        , style "right" "0"
+        , style "padding" "1rem"
+        , style "background-color" "rgba(255, 255, 255, 0.8)"
+        , style "border-radius" "0.5rem"
+        , style "z-index" "100"
+        ]
     }
 
 
