@@ -2,7 +2,7 @@ port module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, div, h1, input, label, node, text, textarea)
-import Html.Attributes exposing (autofocus, class, href, id, name, placeholder, rel, style, value)
+import Html.Attributes exposing (autofocus, class, href, id, name, placeholder, rel, style, tabindex, value)
 import Html.Events exposing (..)
 import Markdown
 
@@ -143,6 +143,8 @@ view title model =
                         ++ [ class model.contentClassName
                            , onClick CopyToClipboard
                            , id htmlOutputId
+                           , tabindex 1
+                           , onBlur (UpdateMarkdown model.markdownInput)
                            ]
                     )
                   <|
@@ -304,15 +306,18 @@ styles =
                , style "padding" "0 0.5rem"
                ]
     , markdownEditor =
-        reset
-            ++ [ style "font-family" "monospace"
-               , style "font-size" "1rem"
-               , style "display" "flex"
-               , style "field-sizing" "normal"
-               ]
-            ++ container
+        container
             ++ flexGrow
-            ++ [ style "min-height" "100%" ]
+            ++ [ style "font-family" "monospace"
+               , style "min-height" "100%"
+               , style "height" "100%"
+               , style "font-size" "1rem"
+               , style "display" "block"
+               , style "box-sizing" "border-box"
+               , style "resize" "none"
+               , style "background" "none"
+               , style "field-sizing" "content"
+               ]
     , htmlPreview =
         container
             ++ flexGrow
