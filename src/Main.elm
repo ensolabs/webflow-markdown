@@ -115,26 +115,15 @@ view title model =
                 UpdateContentClassName
                 []
             ]
-        , div
-            [ style "width" "100vw"
-            , style "height" "100%"
-            , style "display" "flex"
-            , style "align-items" "flex-start"
-            , style "justify-content" "center"
-            ]
+        , div styles.mainLayout
             [ -- Left column: Markdown input
               panel "Markdown Input"
                 [ textarea
-                    ([ revertStyle
-                     , style "font-family" "monospace"
-                     , style "font-size" "1rem"
-                     , style "display" "flex"
-                     , style "field-sizing" "normal"
-                     , value model.markdownInput
-                     , onInput UpdateMarkdown
-                     , autofocus True
-                     ]
-                        ++ contentStylesFullFlexHeight
+                    (styles.markdownEditor
+                        ++ [ value model.markdownInput
+                           , onInput UpdateMarkdown
+                           , autofocus True
+                           ]
                     )
                     []
                 ]
@@ -142,12 +131,11 @@ view title model =
             -- Right column: HTML output
             , panel "HTML Preview"
                 [ div
-                    ([ class model.contentClassName
-                     , style "cursor" "pointer"
-                     , onClick CopyToClipboard
-                     , id htmlOutputId
-                     ]
-                        ++ contentStylesFullFlexHeight
+                    (styles.htmlPreview
+                        ++ [ class model.contentClassName
+                           , onClick CopyToClipboard
+                           , id htmlOutputId
+                           ]
                     )
                   <|
                     Markdown.toHtml
@@ -161,69 +149,24 @@ view title model =
 
 topBar : List (Html msg) -> Html msg
 topBar content =
-    div
-        [ revertStyle
-        , style "display" "flex"
-        , style "gap" "1rem"
-        , style "background-color" "rgba(255, 255, 255, 0.8)"
-        , style "justify-content" "space-between"
-        , style "align-items" "center"
-        , style "position" "sticky"
-        , style "top" "0"
-        , style "z-index" "100"
-        , style "padding" "1rem"
-        ]
-        content
+    div styles.topBar content
 
 
 panel : String -> List (Html msg) -> Html msg
 panel title content =
-    div
-        [ style "flex" "1"
-        , style "padding" "1rem"
-        , style "min-width" "300px"
-        , style "min-height" "calc(100vh - 100px)"
-        , style "flex-direction" "column"
-        , style "display" "flex"
-        ]
-        (h1 [ revertStyle ] [ text title ] :: content)
-
-
-revertStyle : Html.Attribute msg
-revertStyle =
-    style "all" "revert"
-
-
-contentStyles : List (Html.Attribute msg)
-contentStyles =
-    [ style "border" "1px solid #ccc"
-    , style "border-radius" "0.5rem"
-    , style "padding" "1rem"
-    , style "box-sizing" "border-box"
-    , style "width" "100%"
-    ]
-
-
-contentStylesFullFlexHeight : List (Html.Attribute msg)
-contentStylesFullFlexHeight =
-    [ style "flex" "1"
-    , style "min-height" "100%"
-    ]
-        ++ contentStyles
+    div styles.flexPanel
+        (h1 styles.reset [ text title ] :: content)
 
 
 customInput : String -> String -> (String -> msg) -> List (Html msg) -> Html msg
 customInput inputValue labelText onInputHandler additionalElements =
-    label [ name labelText, style "flex" "1", style "width" "100%" ]
+    label (name labelText :: styles.inputLabel)
         ([ div [] [ text labelText ]
          , input
-            (contentStyles
+            (styles.inputField
                 ++ [ value inputValue
                    , onInput onInputHandler
                    , placeholder labelText
-                   , style "overflow-x" "scroll"
-                   , style "min-width" "360px"
-                   , style "padding" "0 0.5rem"
                    ]
             )
             []
@@ -249,6 +192,119 @@ stylesheetInput stylesheet =
             Nothing ->
                 text ""
         ]
+
+
+
+-- STYLES
+
+
+type alias Style msg =
+    List (Html.Attribute msg)
+
+
+styles :
+    { reset : Style msg
+    , flex : Style msg
+    , column : Style msg
+    , fullWidth : Style msg
+    , container : Style msg
+    , flexGrow : Style msg
+    , flexPanel : Style msg
+    , contentArea : Style msg
+    , topBar : Style msg
+    , mainLayout : Style msg
+    , inputField : Style msg
+    , markdownEditor : Style msg
+    , htmlPreview : Style msg
+    , inputLabel : Style msg
+    }
+styles =
+    let
+        reset =
+            [ style "all" "revert" ]
+
+        flex =
+            [ style "display" "flex" ]
+
+        column =
+            flex ++ [ style "flex-direction" "column" ]
+
+        fullWidth =
+            [ style "width" "100%" ]
+
+        container =
+            [ style "border" "1px solid #ccc"
+            , style "border-radius" "0.5rem"
+            , style "padding" "1rem"
+            , style "box-sizing" "border-box"
+            ]
+                ++ fullWidth
+
+        flexGrow =
+            [ style "flex" "1" ]
+    in
+    { reset = reset
+    , flex = flex
+    , column = column
+    , fullWidth = fullWidth
+    , container = container
+    , flexGrow = flexGrow
+    , flexPanel =
+        flexGrow
+            ++ column
+            ++ [ style "padding" "1rem"
+               , style "min-width" "300px"
+               , style "min-height" "calc(100vh - 100px)"
+               ]
+    , contentArea =
+        container
+            ++ flexGrow
+            ++ [ style "min-height" "100%" ]
+    , topBar =
+        reset
+            ++ flex
+            ++ [ style "gap" "1rem"
+               , style "background-color" "rgba(255, 255, 255, 0.8)"
+               , style "justify-content" "space-between"
+               , style "align-items" "center"
+               , style "position" "sticky"
+               , style "top" "0"
+               , style "z-index" "100"
+               , style "padding" "1rem"
+               ]
+    , mainLayout =
+        [ style "width" "100vw"
+        , style "height" "100%"
+        ]
+            ++ flex
+            ++ [ style "align-items" "flex-start"
+               , style "justify-content" "center"
+               ]
+    , inputField =
+        container
+            ++ [ style "overflow-x" "scroll"
+               , style "min-width" "360px"
+               , style "padding" "0 0.5rem"
+               ]
+    , markdownEditor =
+        reset
+            ++ [ style "font-family" "monospace"
+               , style "font-size" "1rem"
+               , style "display" "flex"
+               , style "field-sizing" "normal"
+               ]
+            ++ container
+            ++ flexGrow
+            ++ [ style "min-height" "100%" ]
+    , htmlPreview =
+        container
+            ++ flexGrow
+            ++ [ style "min-height" "100%"
+               , style "cursor" "pointer"
+               ]
+    , inputLabel =
+        style "flex" "1" :: fullWidth
+    }
 
 
 
@@ -286,7 +342,6 @@ or
 ```
 $ npm install -g ripnote
 ```
-
 #### And then:
 
 ![ripnote](https://github.com/cekrem/ripnote/raw/main/screenshot.gif)
