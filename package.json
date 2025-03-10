@@ -11,7 +11,10 @@
   },
   "devDependencies": {
     "elm-live": "^4.0.2",
-    "elm-tooling": "^1.15.1"
+    "elm-tooling": "^1.15.1",
+    "prettier": "^3.5.3",
+    "prettier-plugin-elm": "^0.11.0",
+    "prettier-plugin-tailwindcss": "^0.6.11"
   },
   "dependencies": {
     "http-server": "^14.1.1"

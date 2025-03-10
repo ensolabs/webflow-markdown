@@ -133,7 +133,7 @@ view title model =
                     UpdateContentClassName
                     []
                 ]
-            , div [ class "flex flex-1" ]
+            , div [ class "flex flex-1 flex-wrap h-full" ]
                 [ -- Left column: Markdown input
                   panel "Markdown Input"
                     [ lazy2 textarea
@@ -179,7 +179,7 @@ topBar content =
 
 panel : String -> List (Html msg) -> Html msg
 panel title content =
-    div [ class "w-1/2 p-4 flex flex-col" ]
+    div [ class "w-full sm:w-1/2 p-4 flex flex-col" ]
         (h1 [ class "mb-2" ] [ text title ]
             :: List.map (\c -> div [ class "flex-1 border rounded p-4" ] [ c ]) content
         )
