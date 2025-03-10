@@ -6,6 +6,8 @@ import Html.Attributes exposing (autofocus, class, href, id, name, placeholder, 
 import Html.Events exposing (..)
 import Html.Lazy exposing (lazy, lazy2)
 import Markdown
+import Process
+import Task
 
 
 
@@ -56,6 +58,7 @@ type Msg
     | UpdateContentClassName String
     | CopyToClipboard
     | CopySuccess
+    | ClearCopySuccess
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -86,7 +89,12 @@ update msg model =
             ( model, triggerCopy htmlOutputId )
 
         CopySuccess ->
-            ( { model | showCopySuccess = True }, Cmd.none )
+            ( { model | showCopySuccess = True }
+            , Process.sleep 1000 |> Task.perform (always ClearCopySuccess)
+            )
+
+        ClearCopySuccess ->
+            ( { model | showCopySuccess = False }, Cmd.none )
 
 
 
@@ -140,24 +148,23 @@ view title model =
                 -- Right column: HTML output
                 , panel "HTML Preview"
                     [ lazy2 div
-                        [ class (model.contentClassName ++ " w-full h-full cursor-pointer relative")
+                        [ class (model.contentClassName ++ " w-full h-full cursor-pointer")
                         , onClick CopyToClipboard
                         , id htmlOutputId
                         , tabindex 1
-                        , onBlur (UpdateMarkdown model.markdownInput)
                         ]
                       <|
-                        Markdown.toHtml
-                            Nothing
-                            model.markdownInput
-                            ++ (if model.showCopySuccess then
-                                    [ div [ class "absolute top-0 margin-auto p-4 bg-white/80 rounded" ]
-                                        [ text "Copied to clipboard!" ]
-                                    ]
+                        (if model.showCopySuccess then
+                            [ div [ class "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 bg-white/80 rounded shadow-md z-50" ]
+                                [ text "Copied to clipboard!" ]
+                            ]
 
-                                else
-                                    []
-                               )
+                         else
+                            []
+                        )
+                            ++ Markdown.toHtml
+                                Nothing
+                                model.markdownInput
                     ]
                 ]
             ]
