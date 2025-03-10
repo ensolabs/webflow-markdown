@@ -110,4 +110,4 @@ This project is licensed under the MIT License - see the package.json file for d
 
 ## Author
 
-Christian Ekrem <christianekrem@gmail.com>
+Christian Ekrem <christian@enso.no>

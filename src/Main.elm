@@ -46,7 +46,7 @@ type alias Model =
 
 init : String -> String -> String -> ( Model, Cmd Msg )
 init markdown stylesheetUrl containerClassName =
-    ( Model markdown (Just stylesheetUrl) containerClassName False True Nothing
+    ( Model markdown (Just stylesheetUrl) containerClassName False False Nothing
     , fetchReadme
     )
 
@@ -184,7 +184,7 @@ view title model =
                 , -- Left column: Markdown input
                   panel "Markdown Input"
                     [ lazy2 textarea
-                        [ class "w-full h-full font-mono resize-none bg-transparent"
+                        [ class "outline-none w-full h-full font-mono resize-none bg-transparent"
                         , value model.markdownInput
                         , onInput UpdateMarkdown
                         , autofocus True
@@ -193,12 +193,11 @@ view title model =
                     ]
 
                 -- Right column: HTML output
-                , panel "HTML Preview"
+                , panel "HTML Preview (click to copy)"
                     [ lazy2 div
                         [ class (model.contentClassName ++ " w-full h-full cursor-pointer")
                         , onClick CopyToClipboard
                         , id htmlOutputId
-                        , tabindex 1
                         ]
                       <|
                         (if model.showCopySuccess then
@@ -280,7 +279,7 @@ mobileCopOut : List (Html.Attribute msg) -> List (Html msg) -> Html msg
 mobileCopOut attributes content =
     div [ class "w-full h-full overflow-hidden" ]
         [ div (class "h-0 w-0 sm:h-full sm:w-full" :: attributes)
-            (div [ class "sm:hidden fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center bg-white overflow-hidden" ] [ div [] [ text "This app only works on desktop. Please use a desktop browser." ] ]
+            (div [ class "sm:hidden fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center bg-white overflow-hidden text-center p-4 text-lg" ] [ div [] [ text "This app only works on desktop. Please use a desktop browser." ] ]
                 :: content
             )
         ]
