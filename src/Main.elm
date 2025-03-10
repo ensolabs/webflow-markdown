@@ -1,7 +1,7 @@
 port module Main exposing (main)
 
 import Browser exposing (Document)
-import Html exposing (Html, div, h1, input, label, node, text, textarea)
+import Html exposing (Html, br, div, h1, input, label, node, text, textarea)
 import Html.Attributes exposing (autofocus, class, href, id, name, placeholder, rel, tabindex, value)
 import Html.Events exposing (..)
 import Html.Lazy exposing (lazy, lazy2)
@@ -124,7 +124,7 @@ view : String -> Model -> Document Msg
 view title model =
     { title = title
     , body =
-        [ div [ class "flex flex-col min-h-screen" ]
+        [ div [ class "flex flex-col h-screen" ]
             [ lazy topBar
                 [ stylesheetInput model.stylesheet
                 , customInput
@@ -133,7 +133,7 @@ view title model =
                     UpdateContentClassName
                     []
                 ]
-            , div [ class "flex flex-1 flex-wrap h-full" ]
+            , div [ class "relative flex flex-1 flex-wrap sm:overflow-hidden" ]
                 [ -- Left column: Markdown input
                   panel "Markdown Input"
                     [ lazy2 textarea
@@ -165,6 +165,7 @@ view title model =
                             ++ Markdown.toHtml
                                 Nothing
                                 model.markdownInput
+                            ++ [ br [] [] ]
                     ]
                 ]
             ]
@@ -174,14 +175,14 @@ view title model =
 
 topBar : List (Html msg) -> Html msg
 topBar content =
-    div [ class "sticky top-0 z-10 flex justify-between gap-8 items-center p-4 bg-white/80" ] content
+    div [ class "sticky top-0 z-10 h-24 flex justify-between gap-8 items-center p-4 bg-white/60" ] content
 
 
 panel : String -> List (Html msg) -> Html msg
 panel title content =
-    div [ class "w-full sm:w-1/2 p-4 flex flex-col" ]
+    div [ class "sm:static w-full sm:w-1/2 p-4 flex flex-col h-[calc(100vh-6rem)] overflow-hidden" ]
         (h1 [ class "mb-2" ] [ text title ]
-            :: List.map (\c -> div [ class "flex-1 border rounded p-4" ] [ c ]) content
+            :: List.map (\c -> div [ class "flex-1 border rounded p-4 overflow-auto" ] [ c ]) content
         )
 
 
