@@ -10,18 +10,18 @@ Using the built-in Webflow editor for long articles can be a hassle. It's not op
 
 This tool allows you to:
 
-1. Write your articles in Markdown using your preferred editor and setup
-2. Preview how it will look with your Webflow site's CSS (specifically configured for enso.no)
-3. Generate clean HTML that you can copy and paste directly into Webflow
+- Write your articles in Markdown using your preferred editor and setup
+- Preview how it will look with your Webflow site's CSS (specifically configured for enso.no)
+- Generate clean HTML that you can copy and paste directly into Webflow
 
 The preview in this tool uses the same CSS as enso.no, ensuring that what you see is what you'll get when you paste the HTML into your Webflow site.
 
 ## How to Use
 
-1. Write your content in the Markdown editor on the left
-2. See the live preview on the right
-3. When you're satisfied, copy the generated HTML from the preview
-4. Paste it into the Webflow editor
+- Write your content in the Markdown editor on the left
+- See the live preview on the right
+- When you're satisfied, copy the generated HTML from the preview
+- Paste it into the Webflow editor
 
 The tool is pre-configured with the enso.no stylesheet at the time of coding, but if that becomes stale you can replace it with a fresh link using the input on top.
 
@@ -49,19 +49,19 @@ You can use the hosted version of this tool at:
 
 ### Installation
 
-1. Clone this repository
+- Clone this repository
 
-   ```
-   git clone https://github.com/cekrem/webflow-markdown.git
-   cd webflow-markdown
-   ```
+  ```
+  git clone https://github.com/cekrem/webflow-markdown.git
+  cd webflow-markdown
+  ```
 
-2. Install dependencies
-   ```
-   npm install
-   # or
-   yarn
-   ```
+- Install dependencies
+  ```
+  npm install
+  # or
+  yarn
+  ```
 
 ### Development
 
