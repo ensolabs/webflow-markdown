@@ -4,6 +4,7 @@ import Browser exposing (Document)
 import Html exposing (Html, div, h1, input, label, node, text, textarea)
 import Html.Attributes exposing (autofocus, class, href, id, name, placeholder, rel, tabindex, value)
 import Html.Events exposing (..)
+import Html.Lazy exposing (lazy, lazy2)
 import Markdown
 
 
@@ -116,7 +117,7 @@ view title model =
     { title = title
     , body =
         [ div [ class "flex flex-col min-h-screen" ]
-            [ topBar
+            [ lazy topBar
                 [ stylesheetInput model.stylesheet
                 , customInput
                     model.contentClassName
@@ -127,7 +128,7 @@ view title model =
             , div [ class "flex flex-1" ]
                 [ -- Left column: Markdown input
                   panel "Markdown Input"
-                    [ textarea
+                    [ lazy2 textarea
                         [ class "w-full h-full font-mono resize-none bg-transparent"
                         , value model.markdownInput
                         , onInput UpdateMarkdown
@@ -138,7 +139,7 @@ view title model =
 
                 -- Right column: HTML output
                 , panel "HTML Preview"
-                    [ div
+                    [ lazy2 div
                         [ class (model.contentClassName ++ " w-full h-full cursor-pointer relative")
                         , onClick CopyToClipboard
                         , id htmlOutputId
