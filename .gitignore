@@ -2,5 +2,5 @@ elm-stuff
 node_modules
 repl-temp-*
 elm.js
-index.html
+public_html/*.js
 

@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "postinstall": "elm-tooling install",
-    "build": "elm make src/Main.elm --output=public_html/elm.js --optimize && cp index.template.html public_html/index.html",
-    "dev": "cp index.template.html public_html/index.html && elm-live src/Main.elm --dir=./public_html -- --output=public_html/elm.js --debug",
+    "build": "elm make src/Main.elm --output=public_html/elm.js --optimize",
+    "dev": "elm-live src/Main.elm --dir=./public_html -- --output=public_html/elm.js --debug",
     "start": "http-server public_html --port=$PORT"
   },
   "devDependencies": {
