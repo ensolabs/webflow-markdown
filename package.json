@@ -1,7 +1,7 @@
 {
   "name": "webflow-markdown",
   "version": "1.0.0",
-  "author": "Christian Ekrem <cekrem@pm.me>",
+  "author": "Christian Ekrem <christian@enso.no>",
   "license": "MIT",
   "scripts": {
     "postinstall": "elm-tooling install",

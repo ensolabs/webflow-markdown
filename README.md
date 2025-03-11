@@ -1,6 +1,8 @@
-# Webflow Markdown
+# Webflow Markdown: Markdown -> Webflow RTF
 
 A simple tool that lets you write content in Markdown and convert it to HTML that's ready to paste into Webflow.
+
+Optional: preview hacky article styling overrides with the toggle button above.
 
 ## The Problem
 
@@ -20,7 +22,7 @@ The preview in this tool uses the same CSS as enso.no, ensuring that what you se
 
 - Write your content in the Markdown editor on the left
 - See the live preview on the right
-- When you're satisfied, copy the generated HTML from the preview
+- When you're satisfied, copy the generated HTML from the preview (just click on it!)
 - Paste it into the Webflow editor
 
 The tool is pre-configured with the enso.no stylesheet at the time of coding, but if that becomes stale you can replace it with a fresh link using the input on top.
@@ -52,7 +54,7 @@ You can use the hosted version of this tool at:
 - Clone this repository
 
   ```
-  git clone https://github.com/cekrem/webflow-markdown.git
+  git clone https://github.com/ensolabs/webflow-markdown.git
   cd webflow-markdown
   ```
 
