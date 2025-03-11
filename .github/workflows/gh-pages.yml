@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,3 +25,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public_html
+
+      - shell: bash
+        env:
+          DEPLOY_KEY: ${{ secrets.RENDER_DEPLOY_KEY }}
+        run: |
+          echo "Deploying to Render"
+          curl https://api.render.com/deploy/srv-cv82bj0gph6c7399k6q0?key="$DEPLOY_KEY"
