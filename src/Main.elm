@@ -42,12 +42,13 @@ type alias Model =
     , showReadme : Bool
     , readmeContent : Maybe String
     , addStylesheetOverride : Bool
+    , showEditor : Bool
     }
 
 
 init : String -> String -> String -> ( Model, Cmd Msg )
 init markdown stylesheetUrl containerClassName =
-    ( Model markdown (Just stylesheetUrl) containerClassName False False Nothing False
+    ( Model markdown (Just stylesheetUrl) containerClassName False False Nothing False True
     , fetchReadme
     )
 
@@ -74,6 +75,7 @@ type Msg
     | ToggleReadme
     | GotReadme (Result Http.Error String)
     | ToggleStylesheetOverride
+    | ToggleEditor
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -125,6 +127,9 @@ update msg model =
         ToggleStylesheetOverride ->
             ( { model | addStylesheetOverride = not model.addStylesheetOverride }, Cmd.none )
 
+        ToggleEditor ->
+            ( { model | showEditor = not model.showEditor }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -163,7 +168,7 @@ view title model =
                     "Content class name(s):"
                     UpdateContentClassName
                     []
-                , cornerSection
+                , buttons
                     [ button ToggleReadme
                         [ text
                             (if model.showReadme then
@@ -182,9 +187,18 @@ view title model =
                                 "Enable stylesheet override"
                             )
                         ]
+                    , button ToggleEditor
+                        [ text
+                            (if model.showEditor then
+                                "Hide editor"
+
+                             else
+                                "Show editor"
+                            )
+                        ]
                     ]
                 ]
-            , div [ class "w-full flex flex-1 sm:overflow-hidden" ]
+            , div [ class "w-full flex flex-1 overflow-hidden justify-center" ]
                 [ if model.showReadme then
                     modalPanel "README"
                         [ case model.readmeContent of
@@ -198,16 +212,20 @@ view title model =
 
                   else
                     text ""
-                , -- Left column: Markdown input
-                  panel "Markdown Input"
-                    [ lazy2 textarea
-                        [ class "outline-none w-full h-full font-mono resize-none bg-transparent"
-                        , value model.markdownInput
-                        , onInput UpdateMarkdown
-                        , autofocus True
+                , if model.showEditor then
+                    -- Left column: Markdown input
+                    panel "Markdown Input"
+                        [ lazy2 textarea
+                            [ class "outline-none w-full h-full font-mono resize-none bg-transparent"
+                            , value model.markdownInput
+                            , onInput UpdateMarkdown
+                            , autofocus True
+                            ]
+                            []
                         ]
-                        []
-                    ]
+
+                  else
+                    text ""
 
                 -- Right column: HTML output
                 , panel "HTML Preview (click to copy)"
@@ -217,17 +235,17 @@ view title model =
                         , id htmlOutputId
                         ]
                       <|
-                        (if model.showCopySuccess then
-                            [ div [ class "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 bg-white/80 rounded shadow-md z-50" ] [ text "Copied to clipboard!" ]
-                            ]
+                        Markdown.toHtml
+                            Nothing
+                            model.markdownInput
+                            ++ br [] []
+                            :: (if model.showCopySuccess then
+                                    [ div [ class "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 bg-white/80 rounded shadow-md z-50" ] [ text "Copied to clipboard!" ]
+                                    ]
 
-                         else
-                            []
-                        )
-                            ++ Markdown.toHtml
-                                Nothing
-                                model.markdownInput
-                            ++ [ br [] [] ]
+                                else
+                                    []
+                               )
                     ]
                 ]
             ]
@@ -237,12 +255,12 @@ view title model =
 
 topBar : List (Html msg) -> Html msg
 topBar content =
-    div [ class "sticky w-full top-0 z-10 h-32 flex justify-between gap-8 items-center p-4 bg-white" ] content
+    div [ class "sticky w-full top-0 z-10 h-32 flex justify-between gap-8 items-end p-4 bg-white" ] content
 
 
 panel : String -> List (Html msg) -> Html msg
 panel title content =
-    div [ class "w-full sm:w-1/2 p-4 flex flex-col h-[calc(100vh-8rem)] overflow-hidden" ]
+    div [ class "min-w-[50%] p-4 flex flex-col h-[calc(100vh-8rem)] overflow-hidden" ]
         (h1 [ class "mb-2" ] [ text title ]
             :: List.map (\c -> div [ class "flex-1 border rounded p-4 overflow-auto" ] [ c ]) content
         )
@@ -250,7 +268,7 @@ panel title content =
 
 modalPanel : String -> List (Html msg) -> Html msg
 modalPanel title content =
-    div [ class "absolute w-full p-4 flex flex-col h-[calc(100vh-8rem)] overflow-hidden bg-white/95" ]
+    div [ class "w-full absolute p-4 flex flex-1 flex-col h-[calc(100vh-8rem)] overflow-hidden bg-white/95" ]
         (h1 [ class "mb-2" ] [ text title ]
             :: List.map (\c -> div [ class "flex-1 border rounded p-4 overflow-auto" ] [ c ]) content
         )
@@ -275,14 +293,14 @@ withLabel labelText content =
         (div [] [ text labelText ] :: content)
 
 
-cornerSection : List (Html msg) -> Html msg
-cornerSection content =
-    div [ class "absolute right-4 top-2 flex gap-2" ] content
+buttons : List (Html msg) -> Html msg
+buttons content =
+    div [ class "absolute top-2 right-2 left-2 flex gap-2 justify-around" ] content
 
 
 button : a -> List (Html a) -> Html a
 button onClickMsg content =
-    div [ class "rounded-full bg-gray-200 px-2 py-1 text-sm text-center cursor-pointer", onClick onClickMsg ] content
+    div [ class "rounded-full bg-gray-200 px-4 py-2 text-sm text-center cursor-pointer", onClick onClickMsg ] content
 
 
 stylesheetInput : Maybe String -> Html Msg
@@ -725,7 +743,6 @@ stylesheetOverrideContent =
     """
     .article-body {
         line-height: 1.5 !important;
-        width: auto !important;
         max-width: 80ch !important;
         margin: 0 auto !important;
         font-size: 100% !important;
