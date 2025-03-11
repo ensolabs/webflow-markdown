@@ -6272,7 +6272,7 @@ var $elm$http$Http$get = function (r) {
 var $author$project$Main$fetchReadme = $elm$http$Http$get(
 	{
 		a5: $elm$http$Http$expectString($author$project$Main$GotReadme),
-		bt: 'https://raw.githubusercontent.com/ensolabs/webflow-markdown-preview/refs/heads/master/README.md'
+		bt: 'https://raw.githubusercontent.com/ensolabs/webflow-markdown/refs/heads/master/README.md'
 	});
 var $author$project$Main$init = F3(
 	function (markdown, stylesheetUrl, containerClassName) {
