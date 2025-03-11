@@ -10793,7 +10793,7 @@ var $author$project$Main$mainContent = function (model) {
 				$author$project$Main$markdownEditor(model.G)) : $elm$html$Html$text(''),
 				A2(
 				$author$project$Main$columnPanel,
-				'HTML Preview (click to copy)',
+				'Webflow RTF Preview (click to copy)',
 				$author$project$Main$htmlPreview(model))
 			]));
 };
@@ -10836,7 +10836,7 @@ var $author$project$Main$main = $elm$browser$Browser$document(
 		},
 		bp: $author$project$Main$subscriptions,
 		bs: $author$project$Main$update,
-		bu: $author$project$Main$view('Markdown to HTML')
+		bu: $author$project$Main$view('Markdown to Webflow RTF')
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
