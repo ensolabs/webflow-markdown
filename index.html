@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Webflow Markdown</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style>
+      ol,
+      ul,
+      menu {
+        list-style: initial !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="elm-app"></div>
+
+    <script src="elm.js"></script>
+    <script>
+      // Initialize Elm application
+      const app = Elm.Main.init({
+        node: document.getElementById("elm-app"),
+        flags: null,
+      });
+
+      // Subscribe to the triggerCopy port
+      app.ports.triggerCopy.subscribe((id) => {
+        const range = document.createRange();
+        range.selectNode(document.getElementById(id));
+
+        // Select all text in the html output element
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        // Try to copy the selected text to the clipboard
+        const successful = document.execCommand("copy");
+        if (successful) {
+          // Send notification back to Elm that copy was successful
+          app.ports.copySuccess.send(null);
+          // Remove selection after successful copy
+          selection.removeAllRanges();
+        } else {
+          console.error("Failed to copy text: ", err);
+        }
+      });
+
+      // Add any other JavaScript interop code here
+    </script>
+  </body>
+</html>
