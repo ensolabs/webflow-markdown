@@ -55,7 +55,7 @@ init markdown stylesheetUrl containerClassName =
 fetchReadme : Cmd Msg
 fetchReadme =
     Http.get
-        { url = "https://raw.githubusercontent.com/ensolabs/webflow-markdown-preview/refs/heads/master/README.md"
+        { url = "https://raw.githubusercontent.com/ensolabs/webflow-markdown/refs/heads/master/README.md"
         , expect = Http.expectString GotReadme
         }
 
