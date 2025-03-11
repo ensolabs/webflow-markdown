@@ -27,7 +27,7 @@ main =
                     "rich-text article-body w-richtext"
         , update = update
         , subscriptions = subscriptions
-        , view = view "Markdown to HTML"
+        , view = view "Markdown to Webflow RTF"
         }
 
 
@@ -211,7 +211,7 @@ mainContent model =
 
           else
             text ""
-        , columnPanel "HTML Preview (click to copy)" <|
+        , columnPanel "Webflow RTF Preview (click to copy)" <|
             htmlPreview model
         ]
 
