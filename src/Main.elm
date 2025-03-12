@@ -19,16 +19,28 @@ import Task
 main : Program () Model Msg
 main =
     Browser.document
-        { init =
-            \_ ->
-                init
-                    ""
-                    "https://cdn.prod.website-files.com/6214c874431e5f067201a098/css/enso-70214f.d81fe3c7e.css"
-                    "rich-text article-body w-richtext"
+        { init = init
         , update = update
         , subscriptions = subscriptions
         , view = view "Markdown to Webflow RTF"
         }
+
+
+
+-- INIT
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { markdownInput = ""
+      , stylesheet = Just "https://cdn.prod.website-files.com/6214c874431e5f067201a098/css/enso-70214f.d81fe3c7e.css"
+      , contentClassName = "rich-text article-body w-richtext"
+      , showCopySuccess = False
+      , addStylesheetOverride = False
+      , showEditor = True
+      }
+    , fetchReadme
+    )
 
 
 
@@ -43,13 +55,6 @@ type alias Model =
     , addStylesheetOverride : Bool
     , showEditor : Bool
     }
-
-
-init : String -> String -> String -> ( Model, Cmd Msg )
-init markdown stylesheetUrl containerClassName =
-    ( Model markdown (Just stylesheetUrl) containerClassName False False True
-    , fetchReadme
-    )
 
 
 fetchReadme : Cmd Msg
@@ -153,13 +158,11 @@ view : String -> Model -> Document Msg
 view title model =
     { title = title
     , body =
-        [ desktopOnlyWrapper <|
-            [ lazy stylesheetOverride model.addStylesheetOverride
-            , appContainer
-                [ headerSection model
-                , mainContent model
-                , copySuccessToast model.showCopySuccess
-                ]
+        [ lazy stylesheetOverride model.addStylesheetOverride
+        , appContainer
+            [ headerSection model
+            , mainContent model
+            , copySuccessToast model.showCopySuccess
             ]
         ]
     }
@@ -204,7 +207,7 @@ headerSection model =
 
 mainContent : Model -> Html Msg
 mainContent model =
-    div [ class "flex flex-1 overflow-hidden p-4 gap-4" ]
+    div [ class "flex flex-1 overflow-hidden p-4 gap-4 flex-col sm:flex-row" ]
         [ if model.showEditor then
             columnPanel "Markdown Input" <|
                 markdownEditor model.markdownInput
@@ -254,7 +257,7 @@ toggleButton isActive enableText disableText onClickMsg =
 
 columnPanel : String -> Html msg -> Html msg
 columnPanel title content =
-    div [ class "flex-1 flex flex-col min-w-[300px] overflow-hidden" ]
+    div [ class "flex flex-1 flex-col min-w-[300px] overflow-hidden" ]
         [ h2 [ class "text-lg font-semibold mb-2" ] [ text title ]
         , div [ class "flex-1 border rounded overflow-hidden" ] [ content ]
         ]
@@ -313,14 +316,3 @@ stylesheetOverride addStylesheetOverride =
 
     else
         text ""
-
-
-desktopOnlyWrapper : List (Html msg) -> Html msg
-desktopOnlyWrapper content =
-    div [ class "w-full h-full overflow-hidden" ]
-        [ div [ class "h-0 w-0 sm:h-full sm:w-full" ]
-            (div [ class "sm:hidden fixed inset-0 z-50 flex items-center justify-center bg-white text-center p-4 text-lg" ]
-                [ text "This app only works on desktop. Please use a desktop browser." ]
-                :: content
-            )
-        ]
