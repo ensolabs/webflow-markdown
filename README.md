@@ -1,4 +1,4 @@
-# Webflow Markdown: Markdown -> Webflow RTF
+# Webflow Markdown: Markdown -> Webflow compatible RTF
 
 A simple tool that lets you write content in Markdown and convert it to HTML that's ready to paste into Webflow.
 
@@ -39,7 +39,7 @@ The tool is pre-configured with the enso.no stylesheet at the time of coding, bu
 
 You can use the hosted version of this tool at:
 
-[https://webflow-markdown-preview.onrender.com](https://webflow-markdown-preview.onrender.com)
+[https://webflow.enso.no](https://webflow.enso.no)
 
 ## Getting Started
 
@@ -59,6 +59,7 @@ You can use the hosted version of this tool at:
   ```
 
 - Install dependencies
+
   ```
   npm install
   # or
