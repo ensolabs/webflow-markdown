@@ -193,8 +193,8 @@ headerSection model =
         , div [ class "flex gap-2 justify-end mt-4" ]
             [ toggleButton
                 model.addStylesheetOverride
-                "Enable stylesheet override"
-                "Disable stylesheet override"
+                "Add basic GitHub Markdown styling"
+                "Remove basic GitHub Markdown styling"
                 ToggleStylesheetOverride
             , toggleButton
                 model.showEditor
@@ -281,7 +281,7 @@ htmlPreview model =
         , onClick CopyToClipboard
         , id htmlOutputId
         ]
-        (Markdown.toHtml Nothing model.markdownInput)
+        [ Markdown.toHtml [] model.markdownInput ]
 
 
 copySuccessToast : Bool -> Html msg

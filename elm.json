@@ -11,7 +11,7 @@
             "elm/html": "1.0.0",
             "elm/http": "2.0.0",
             "elm/random": "1.0.0",
-            "pablohirafuji/elm-markdown": "2.0.5"
+            "elm-explorations/markdown": "1.0.0"
         },
         "indirect": {
             "elm/bytes": "1.0.8",
