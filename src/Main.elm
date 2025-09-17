@@ -2,8 +2,8 @@ port module Main exposing (main)
 
 import Browser exposing (Document)
 import Constants exposing (htmlOutputId, stylesheetOverrideContent)
-import Html exposing (Html, div, h2, input, node, text, textarea)
-import Html.Attributes exposing (autofocus, class, href, id, placeholder, rel, value)
+import Html exposing (Html, div, h2, input, node, text, textarea, a, img)
+import Html.Attributes exposing (autofocus, class, href, target, id, placeholder, rel, value, src, width)
 import Html.Events exposing (..)
 import Html.Lazy exposing (lazy)
 import Http
@@ -159,10 +159,12 @@ view title model =
     { title = title
     , body =
         [ lazy stylesheetOverride model.addStylesheetOverride
-        , appContainer
-            [ headerSection model
+        , appContainer 
+            [ logoSection model
+            , headerSection model
             , mainContent model
             , copySuccessToast model.showCopySuccess
+            , footerSection model
             ]
         ]
     }
@@ -176,10 +178,21 @@ appContainer : List (Html msg) -> Html msg
 appContainer content =
     div [ class "flex flex-col h-screen bg-gray-50" ] content
 
+logoSection : Model -> Html Msg
+logoSection model =
+    div [ class "bg-white p-2 pb-4 " ]
+        [img [src "Logo.svg", width 100] []]
+
+footerSection : Model -> Html Msg
+footerSection model =
+    div [ class "text-center text-sm pt-4" ]
+        [a [ href "https://enso.no", target "_blank" ] [ text "Made with ❤️ by Ensō" ]]
+    
+        
 
 headerSection : Model -> Html Msg
 headerSection model =
-    div [ class "bg-white p-4 border-b shadow-sm" ]
+    div [ class "bg-slate-200 p-4 pt-8" ]
         [ div [ class "flex flex-wrap gap-4 mb-2" ]
             [ inputWithLabel "Stylesheet URL:"
                 (Maybe.withDefault "" model.stylesheet)
@@ -228,7 +241,7 @@ inputWithLabel labelText inputValue onChange additionalElements =
     div [ class "flex-1 min-w-[250px]" ]
         ([ div [ class "mb-1 text-sm font-medium" ] [ text labelText ]
          , input
-            [ class "w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+            [ class "w-full px-3 py-2 border rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
             , value inputValue
             , onInput onChange
             , placeholder labelText
@@ -242,7 +255,7 @@ inputWithLabel labelText inputValue onChange additionalElements =
 toggleButton : Bool -> String -> String -> msg -> Html msg
 toggleButton isActive enableText disableText onClickMsg =
     div
-        [ class "px-4 py-2 rounded-full text-sm cursor-pointer transition-colors bg-gray-200 hover:bg-gray-300"
+        [ class "px-4 py-2 rounded-full text-sm cursor-pointer transition-colors bg-slate-600 hover:bg-slate-800 text-white"
         , onClick onClickMsg
         ]
         [ text
@@ -257,7 +270,7 @@ toggleButton isActive enableText disableText onClickMsg =
 
 columnPanel : String -> Html msg -> Html msg
 columnPanel title content =
-    div [ class "flex flex-1 flex-col min-w-[300px] overflow-hidden" ]
+    div [ class "flex flex-1 flex-col min-w-[300px] overflow-hidden pt-2" ]
         [ h2 [ class "text-lg font-semibold mb-2" ] [ text title ]
         , div [ class "flex-1 border rounded overflow-hidden" ] [ content ]
         ]
