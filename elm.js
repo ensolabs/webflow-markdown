@@ -6360,6 +6360,36 @@ var $author$project$Main$copySuccessToast = function (showCopySuccess) {
 				$elm$html$Html$text('Copied to clipboard – you can paste it into your Webflow page.')
 			])) : $elm$html$Html$text('');
 };
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
+var $author$project$Main$footerSection = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('text-center text-sm pt-4')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('https://enso.no'),
+						$elm$html$Html$Attributes$target('_blank')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Made with ❤️ by Ensō')
+					]))
+			]));
+};
 var $author$project$Main$ToggleEditor = {$: 8};
 var $author$project$Main$ToggleStylesheetOverride = {$: 7};
 var $author$project$Main$UpdateContentClassName = function (a) {
@@ -6367,12 +6397,6 @@ var $author$project$Main$UpdateContentClassName = function (a) {
 };
 var $author$project$Main$UpdateStylesheet = function (a) {
 	return {$: 1, a: a};
-};
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
 };
 var $elm$virtual_dom$VirtualDom$node = function (tag) {
 	return _VirtualDom_node(
@@ -6458,7 +6482,7 @@ var $author$project$Main$inputWithLabel = F4(
 						$elm$html$Html$input,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300'),
+								$elm$html$Html$Attributes$class('w-full px-3 py-2 border rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-300'),
 								$elm$html$Html$Attributes$value(inputValue),
 								$elm$html$Html$Events$onInput(onChange),
 								$elm$html$Html$Attributes$placeholder(labelText)
@@ -6489,7 +6513,7 @@ var $author$project$Main$toggleButton = F4(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('px-4 py-2 rounded-full text-sm cursor-pointer transition-colors bg-gray-200 hover:bg-gray-300'),
+					$elm$html$Html$Attributes$class('px-4 py-2 rounded-full text-sm cursor-pointer transition-colors bg-slate-600 hover:bg-slate-800 text-white'),
 					$elm$html$Html$Events$onClick(onClickMsg)
 				]),
 			_List_fromArray(
@@ -6512,7 +6536,7 @@ var $author$project$Main$headerSection = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('bg-white p-4 border-b shadow-sm')
+				$elm$html$Html$Attributes$class('bg-slate-200 p-4 pt-8')
 			]),
 		_List_fromArray(
 			[
@@ -6550,6 +6574,38 @@ var $author$project$Main$headerSection = function (model) {
 };
 var $elm$virtual_dom$VirtualDom$lazy = _VirtualDom_lazy;
 var $elm$html$Html$Lazy$lazy = $elm$virtual_dom$VirtualDom$lazy;
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$html$Html$Attributes$width = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'width',
+		$elm$core$String$fromInt(n));
+};
+var $author$project$Main$logoSection = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('bg-white p-2 pb-4 ')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$img,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src('Logo.svg'),
+						$elm$html$Html$Attributes$width(100)
+					]),
+				_List_Nil)
+			]));
+};
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $author$project$Main$columnPanel = F2(
 	function (title, content) {
@@ -6557,7 +6613,7 @@ var $author$project$Main$columnPanel = F2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('flex flex-1 flex-col min-w-[300px] overflow-hidden')
+					$elm$html$Html$Attributes$class('flex flex-1 flex-col min-w-[300px] overflow-hidden pt-2')
 				]),
 			_List_fromArray(
 				[
@@ -6670,9 +6726,11 @@ var $author$project$Main$view = F2(
 					$author$project$Main$appContainer(
 					_List_fromArray(
 						[
+							$author$project$Main$logoSection(model),
 							$author$project$Main$headerSection(model),
 							$author$project$Main$mainContent(model),
-							$author$project$Main$copySuccessToast(model.y)
+							$author$project$Main$copySuccessToast(model.y),
+							$author$project$Main$footerSection(model)
 						]))
 				]),
 			a3: title
