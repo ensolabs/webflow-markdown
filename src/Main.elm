@@ -2,12 +2,13 @@ port module Main exposing (main)
 
 import Browser exposing (Document)
 import Constants exposing (htmlOutputId, stylesheetOverrideContent)
-import Html exposing (Html, div, h2, input, node, text, textarea, a, img)
-import Html.Attributes exposing (autofocus, class, href, target, id, placeholder, rel, value, src, width)
-import Html.Events exposing (..)
-import Html.Lazy exposing (lazy)
+import Html exposing (Html)
+import Html.Attributes as Attr
+import Html.Events as Events
+import Html.Lazy as Lazy
 import Http
-import Markdown
+import Markdown.Parser as Markdown
+import Markdown.Renderer
 import Process
 import Task
 
@@ -158,8 +159,8 @@ view : String -> Model -> Document Msg
 view title model =
     { title = title
     , body =
-        [ lazy stylesheetOverride model.addStylesheetOverride
-        , appContainer 
+        [ Lazy.lazy stylesheetOverride model.addStylesheetOverride
+        , appContainer
             [ logoSection model
             , headerSection model
             , mainContent model
@@ -176,24 +177,25 @@ view title model =
 
 appContainer : List (Html msg) -> Html msg
 appContainer content =
-    div [ class "flex flex-col h-screen bg-gray-50" ] content
+    Html.div [ Attr.class "flex flex-col h-screen bg-gray-50" ] content
+
 
 logoSection : Model -> Html Msg
 logoSection model =
-    div [ class "bg-white p-2 pb-4 " ]
-        [img [src "Logo.svg", width 100] []]
+    Html.div [ Attr.class "bg-white p-2 pb-4 " ]
+        [ Html.img [ Attr.src "Logo.svg", Attr.width 100 ] [] ]
+
 
 footerSection : Model -> Html Msg
 footerSection model =
-    div [ class "text-center text-sm pt-4" ]
-        [a [ href "https://enso.no", target "_blank" ] [ text "Made with ❤️ by Ensō" ]]
-    
-        
+    Html.div [ Attr.class "text-center text-sm pt-4" ]
+        [ Html.a [ Attr.href "https://enso.no", Attr.target "_blank" ] [ Html.text "Made with ❤️ by Ensō" ] ]
+
 
 headerSection : Model -> Html Msg
 headerSection model =
-    div [ class "bg-slate-200 p-4 pt-8" ]
-        [ div [ class "flex flex-wrap gap-4 mb-2" ]
+    Html.div [ Attr.class "bg-slate-200 p-4 pt-8" ]
+        [ Html.div [ Attr.class "flex flex-wrap gap-4 mb-2" ]
             [ inputWithLabel "Stylesheet URL:"
                 (Maybe.withDefault "" model.stylesheet)
                 UpdateStylesheet
@@ -203,7 +205,7 @@ headerSection model =
                 UpdateContentClassName
                 []
             ]
-        , div [ class "flex gap-2 justify-end mt-4" ]
+        , Html.div [ Attr.class "flex gap-2 justify-end mt-4" ]
             [ toggleButton
                 model.addStylesheetOverride
                 "Add basic GitHub Markdown styling"
@@ -220,13 +222,13 @@ headerSection model =
 
 mainContent : Model -> Html Msg
 mainContent model =
-    div [ class "flex flex-1 overflow-hidden p-4 gap-4 flex-col sm:flex-row" ]
+    Html.div [ Attr.class "flex flex-1 overflow-hidden p-4 gap-4 flex-col sm:flex-row" ]
         [ if model.showEditor then
             columnPanel "Markdown Input" <|
                 markdownEditor model.markdownInput
 
           else
-            text ""
+            Html.text ""
         , columnPanel "Webflow RTF Preview (click to copy)" <|
             htmlPreview model
         ]
@@ -238,13 +240,13 @@ mainContent model =
 
 inputWithLabel : String -> String -> (String -> msg) -> List (Html msg) -> Html msg
 inputWithLabel labelText inputValue onChange additionalElements =
-    div [ class "flex-1 min-w-[250px]" ]
-        ([ div [ class "mb-1 text-sm font-medium" ] [ text labelText ]
-         , input
-            [ class "w-full px-3 py-2 border rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-            , value inputValue
-            , onInput onChange
-            , placeholder labelText
+    Html.div [ Attr.class "flex-1 min-w-[250px]" ]
+        ([ Html.div [ Attr.class "mb-1 text-sm font-medium" ] [ Html.text labelText ]
+         , Html.input
+            [ Attr.class "w-full px-3 py-2 border rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+            , Attr.value inputValue
+            , Events.onInput onChange
+            , Attr.placeholder labelText
             ]
             []
          ]
@@ -254,11 +256,11 @@ inputWithLabel labelText inputValue onChange additionalElements =
 
 toggleButton : Bool -> String -> String -> msg -> Html msg
 toggleButton isActive enableText disableText onClickMsg =
-    div
-        [ class "px-4 py-2 rounded-full text-sm cursor-pointer transition-colors bg-slate-600 hover:bg-slate-800 text-white"
-        , onClick onClickMsg
+    Html.div
+        [ Attr.class "px-4 py-2 rounded-full text-sm cursor-pointer transition-colors bg-slate-600 hover:bg-slate-800 text-white"
+        , Events.onClick onClickMsg
         ]
-        [ text
+        [ Html.text
             (if isActive then
                 disableText
 
@@ -270,62 +272,116 @@ toggleButton isActive enableText disableText onClickMsg =
 
 columnPanel : String -> Html msg -> Html msg
 columnPanel title content =
-    div [ class "flex flex-1 flex-col min-w-[300px] overflow-hidden pt-2" ]
-        [ h2 [ class "text-lg font-semibold mb-2" ] [ text title ]
-        , div [ class "flex-1 border rounded overflow-hidden" ] [ content ]
+    Html.div [ Attr.class "flex flex-1 flex-col min-w-[300px] overflow-hidden pt-2" ]
+        [ Html.h2 [ Attr.class "text-lg font-semibold mb-2" ] [ Html.text title ]
+        , Html.div [ Attr.class "flex-1 border rounded overflow-hidden" ] [ content ]
         ]
 
 
 markdownEditor : String -> Html Msg
 markdownEditor markdownInput =
-    textarea
-        [ class "outline-none w-full h-full p-4 font-mono resize-none"
-        , value markdownInput
-        , onInput UpdateMarkdown
-        , autofocus True
+    Html.textarea
+        [ Attr.class "outline-none w-full h-full p-4 font-mono resize-none"
+        , Attr.value markdownInput
+        , Events.onInput UpdateMarkdown
+        , Attr.autofocus True
         ]
         []
 
 
 htmlPreview : Model -> Html Msg
 htmlPreview model =
-    div
-        [ class (model.contentClassName ++ " w-full h-full p-4 overflow-auto cursor-pointer")
-        , onClick CopyToClipboard
-        , id htmlOutputId
+    Html.div
+        [ Attr.class (model.contentClassName ++ " w-full h-full p-4 overflow-auto cursor-pointer")
+        , Events.onClick CopyToClipboard
+        , Attr.id htmlOutputId
         ]
-        [ Markdown.toHtml [] model.markdownInput ]
+        [ parseMarkdown model.markdownInput ]
+
+
+parseMarkdown : String -> Html msg
+parseMarkdown rawMarkdown =
+    case
+        rawMarkdown
+            |> Markdown.parse
+            |> Result.mapError
+                (List.map Markdown.deadEndToString >> String.join "\n")
+            |> Result.andThen (\ast -> Markdown.Renderer.render customRenderer ast)
+    of
+        Ok rendered ->
+            Html.div [] rendered
+
+        Err errors ->
+            Html.text errors
+
+
+customRenderer : Markdown.Renderer.Renderer (Html msg)
+customRenderer =
+    let
+        default =
+            Markdown.Renderer.defaultHtmlRenderer
+    in
+    { default
+        | codeBlock =
+            \{ body, language } ->
+                let
+                    syntaxClasses : List (Html.Attribute msg)
+                    syntaxClasses =
+                        case Maybe.map String.words language of
+                            Just (actualLanguage :: _) ->
+                                [ Attr.class <| "language-" ++ actualLanguage ]
+
+                            _ ->
+                                []
+                in
+                Html.pre []
+                    [ Html.code syntaxClasses
+                        [ Html.text body
+                        ]
+                    ]
+    }
+
+
+webflowCodePreAttrs : List (Html.Attribute msg)
+webflowCodePreAttrs =
+    -- I wish this worked, but it's ignored by webflow:
+    [ Attr.style "overflow-x" "auto"
+    , Attr.style "background" "rgb(43,43,43)"
+    , Attr.style "color" "rgb(248,248,242)"
+    , Attr.style "padding" "0.5em"
+    , Attr.class "w-code-block"
+    ]
 
 
 copySuccessToast : Bool -> Html msg
 copySuccessToast showCopySuccess =
     if showCopySuccess then
-        div
-            [ class "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 bg-white rounded shadow-lg z-50" ]
-            [ text "Copied to clipboard – you can paste it into your Webflow page." ]
+        Html.div
+            [ Attr.class "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 bg-white rounded shadow-lg z-50" ]
+            [ Html.text "Copied to clipboard – you can paste it into your Webflow page." ]
 
     else
-        text ""
+        Html.text ""
 
 
 injectStylesheet : Maybe String -> Html msg
 injectStylesheet stylesheet =
     case stylesheet of
         Just url ->
-            node "link"
-                [ href url
-                , rel "stylesheet"
+            Html.node "link"
+                [ Attr.href url
+                , Attr.rel "stylesheet"
                 ]
                 []
 
         Nothing ->
-            text ""
+            Html.text ""
 
 
 stylesheetOverride : Bool -> Html Msg
 stylesheetOverride addStylesheetOverride =
     if addStylesheetOverride then
-        node "style" [] [ text stylesheetOverrideContent ]
+        Html.node "style" [] [ Html.text stylesheetOverrideContent ]
 
     else
-        text ""
+        Html.text ""

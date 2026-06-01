@@ -4,3 +4,4 @@ repl-temp-*
 elm.js
 public_html/*.js
 
+.claude/skills
