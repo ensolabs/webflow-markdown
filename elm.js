@@ -10929,32 +10929,31 @@ var $author$project$Main$encodeCodeBlock = A2(
 					$elm$core$Basics$composeR,
 					$elm$core$Maybe$withDefault('invalid data'),
 					$elm$url$Url$percentEncode)))));
+var $author$project$Main$viewCodeBlockImg = function (_v0) {
+	var body = _v0.be;
+	var language = _v0.cu;
+	var lang = function () {
+		if (!language.$) {
+			var l = language.a;
+			return '&lang=' + l;
+		} else {
+			return '';
+		}
+	}();
+	var src = 'https://codimg.alwaysdata.net/code.svg?input=' + ($author$project$Main$encodeCodeBlock(body) + lang);
+	return A2(
+		$elm$html$Html$img,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$src(src)
+			]),
+		_List_Nil);
+};
 var $author$project$Main$customRenderer = function () {
 	var _default = $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer;
 	return _Utils_update(
 		_default,
-		{
-			ce: function (_v0) {
-				var body = _v0.be;
-				var language = _v0.cu;
-				var lang = function () {
-					if (!language.$) {
-						var l = language.a;
-						return '&lang=' + l;
-					} else {
-						return '';
-					}
-				}();
-				var src = 'https://codimg.alwaysdata.net/code.svg?input=' + ($author$project$Main$encodeCodeBlock(body) + lang);
-				return A2(
-					$elm$html$Html$img,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$src(src)
-						]),
-					_List_Nil);
-			}
-		});
+		{ce: $author$project$Main$viewCodeBlockImg});
 }();
 var $dillonkearns$elm_markdown$Markdown$Parser$problemToString = function (problem) {
 	switch (problem.$) {
