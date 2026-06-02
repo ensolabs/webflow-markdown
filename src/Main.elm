@@ -347,7 +347,12 @@ viewCodeBlockImg { body, language } =
                 ++ encodeCodeBlock body
                 ++ lang
     in
-    Html.img [ Attr.src src ] []
+    Html.div []
+        [ Html.img [ Attr.src src ] []
+
+        -- This ensures space beneath inserted image
+        , Html.p [] []
+        ]
 
 
 encodeCodeBlock : String -> String
