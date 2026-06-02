@@ -348,7 +348,7 @@ viewCodeBlockImg { body, language } =
                 ++ lang
     in
     Html.div []
-        [ Html.img [ Attr.src src ] []
+        [ Html.img [ Attr.src src, Attr.alt body ] []
 
         -- This ensures space beneath inserted image
         , Html.p [] []
