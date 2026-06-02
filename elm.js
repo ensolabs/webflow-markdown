@@ -10950,7 +10950,8 @@ var $author$project$Main$viewCodeBlockImg = function (_v0) {
 				$elm$html$Html$img,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$src(src)
+						$elm$html$Html$Attributes$src(src),
+						$elm$html$Html$Attributes$alt(body)
 					]),
 				_List_Nil),
 				A2($elm$html$Html$p, _List_Nil, _List_Nil)
