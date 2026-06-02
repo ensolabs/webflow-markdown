@@ -10942,12 +10942,19 @@ var $author$project$Main$viewCodeBlockImg = function (_v0) {
 	}();
 	var src = 'https://codimg.alwaysdata.net/code.svg?input=' + ($author$project$Main$encodeCodeBlock(body) + lang);
 	return A2(
-		$elm$html$Html$img,
+		$elm$html$Html$div,
+		_List_Nil,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$src(src)
-			]),
-		_List_Nil);
+				A2(
+				$elm$html$Html$img,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src(src)
+					]),
+				_List_Nil),
+				A2($elm$html$Html$p, _List_Nil, _List_Nil)
+			]));
 };
 var $author$project$Main$customRenderer = function () {
 	var _default = $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer;
