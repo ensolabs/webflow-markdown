@@ -6586,7 +6586,7 @@ var $author$project$Main$init = function (_v0) {
 			U: '',
 			ab: false,
 			ac: true,
-			ae: $elm$core$Maybe$Just('https://cdn.prod.website-files.com/6214c874431e5f067201a098/css/enso-70214f.d81fe3c7e.css')
+			ae: $elm$core$Maybe$Just('https://cdn.prod.website-files.com/6214c874431e5f067201a098/css/enso-70214f.shared.d8e3734a9.css')
 		},
 		$author$project$Main$fetchReadme);
 };
