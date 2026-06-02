@@ -310,7 +310,7 @@ parseMarkdown rawMarkdown =
             |> Markdown.parse
             |> Result.mapError
                 (List.map Markdown.deadEndToString >> String.join "\n")
-            |> Result.andThen (\ast -> Markdown.Renderer.render customRenderer ast)
+            |> Result.andThen (Markdown.Renderer.render customRenderer)
     of
         Ok rendered ->
             Html.div [] rendered
@@ -326,25 +326,28 @@ customRenderer =
             Markdown.Renderer.defaultHtmlRenderer
     in
     { default
-        | codeBlock =
-            \{ body, language } ->
-                let
-                    lang =
-                        case language of
-                            Just l ->
-                                "&lang=" ++ l
-
-                            Nothing ->
-                                ""
-
-                    src =
-                        "https://codimg.alwaysdata.net/code.svg?input="
-                            --  "http://localhost:8100/code.svg?input="
-                            ++ encodeCodeBlock body
-                            ++ lang
-                in
-                Html.img [ Attr.src src ] []
+        | codeBlock = viewCodeBlockImg
     }
+
+
+viewCodeBlockImg : { a | body : String, language : Maybe String } -> Html msg
+viewCodeBlockImg { body, language } =
+    let
+        lang =
+            case language of
+                Just l ->
+                    "&lang=" ++ l
+
+                Nothing ->
+                    ""
+
+        src =
+            "https://codimg.alwaysdata.net/code.svg?input="
+                --  "http://localhost:8100/code.svg?input="
+                ++ encodeCodeBlock body
+                ++ lang
+    in
+    Html.img [ Attr.src src ] []
 
 
 encodeCodeBlock : String -> String

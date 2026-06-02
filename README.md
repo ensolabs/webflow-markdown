@@ -18,6 +18,40 @@ This tool allows you to:
 
 The preview in this tool uses the same CSS as enso.no, ensuring that what you see is what you'll get when you paste the HTML into your Webflow site.
 
+## Code Blocks: Markdown → Syntax-Highlighted SVG
+
+Code blocks are the one thing Webflow's editor handles poorly. Pasting a raw `<pre><code>` block into the Webflow editor tends to lose formatting, mangle indentation, and strip syntax highlighting — and there's no reliable way to get nicely highlighted code to survive the round-trip.
+
+Our workaround: **we don't paste code as text at all — we paste it as an image.**
+
+Every fenced code block in your Markdown is replaced with an `<img>` tag that points at a small Go service which renders the code as a syntax-highlighted SVG on the fly. Because it's just an image, it survives copy/paste into Webflow perfectly and looks identical everywhere.
+
+### How it works
+
+1. **In the browser (this Elm app):** for each code block we take the source text and
+   - encode it to UTF-8 bytes,
+   - `deflate`-compress it (keeps the URL short even for long snippets),
+   - Base64-encode it, and
+   - URL-percent-encode the result.
+
+   The block then becomes an image whose `src` is the rendering service plus the encoded code and an optional language hint:
+
+   ```
+   https://codimg.alwaysdata.net/code.svg?input=<deflate+base64+urlencoded>&lang=<language>
+   ```
+
+   (See `viewCodeBlockImg` / `encodeCodeBlock` in `src/Main.elm`.)
+
+2. **On the backend (Go + Chroma):** the service reverses the pipeline — URL-decode, Base64-decode, inflate — to recover the original source, then runs it through [Chroma](https://github.com/alecthomas/chroma) for syntax highlighting using the supplied `lang` (with auto-detection as a fallback). It returns an SVG with the correct `Content-Type`, so the browser renders it inline.
+
+The compression step matters: code blocks can be long, and deflating before Base64 keeps the resulting URL well within practical length limits. URL-encoding the Base64 output is what makes it safe to drop straight into a query string.
+
+### Why an image instead of HTML?
+
+- It pastes into Webflow cleanly — no lost indentation, no stripped tags, no editor reformatting.
+- Highlighting is rendered server-side, so it looks the same regardless of Webflow's own styles.
+- The code is fully encoded in the URL, so the rendering service is stateless — there's nothing to store.
+
 ## How to Use
 
 - Write your content in the Markdown editor on the left
