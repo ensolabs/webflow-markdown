@@ -4762,6 +4762,23 @@ var _Bitwise_shiftRightZfBy = F2(function(offset, a)
 });
 
 
+function _Url_percentEncode(string)
+{
+	return encodeURIComponent(string);
+}
+
+function _Url_percentDecode(string)
+{
+	try
+	{
+		return $elm$core$Maybe$Just(decodeURIComponent(string));
+	}
+	catch (e)
+	{
+		return $elm$core$Maybe$Nothing;
+	}
+}
+
 
 
 // STRINGS
@@ -4991,24 +5008,7 @@ var _Regex_splitAtMost = F3(function(n, re, str)
 });
 
 var _Regex_infinity = Infinity;
-
-
-function _Url_percentEncode(string)
-{
-	return encodeURIComponent(string);
-}
-
-function _Url_percentDecode(string)
-{
-	try
-	{
-		return $elm$core$Maybe$Just(decodeURIComponent(string));
-	}
-	catch (e)
-	{
-		return $elm$core$Maybe$Nothing;
-	}
-}var $elm$core$Basics$EQ = 1;
+var $elm$core$Basics$EQ = 1;
 var $elm$core$Basics$GT = 2;
 var $elm$core$Basics$LT = 0;
 var $elm$core$List$cons = _List_cons;
@@ -10902,13 +10902,7 @@ var $danfishgold$base64_bytes$Decode$fromBytes = function (bytes) {
 		bytes);
 };
 var $danfishgold$base64_bytes$Base64$fromBytes = $danfishgold$base64_bytes$Decode$fromBytes;
-var $elm$core$String$replace = F3(
-	function (before, after, string) {
-		return A2(
-			$elm$core$String$join,
-			after,
-			A2($elm$core$String$split, before, string));
-	});
+var $elm$url$Url$percentEncode = _Url_percentEncode;
 var $elm$bytes$Bytes$Encode$Utf8 = F2(
 	function (a, b) {
 		return {$: 9, a: a, b: b};
@@ -10934,7 +10928,7 @@ var $author$project$Main$encodeCodeBlock = A2(
 				A2(
 					$elm$core$Basics$composeR,
 					$elm$core$Maybe$withDefault('invalid data'),
-					A2($elm$core$String$replace, '+', '_'))))));
+					$elm$url$Url$percentEncode)))));
 var $author$project$Main$customRenderer = function () {
 	var _default = $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer;
 	return _Utils_update(
@@ -14043,7 +14037,6 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$decodeUrlRegex = A2(
 	$elm$regex$Regex$never,
 	$elm$regex$Regex$fromString('%(?:3B|2C|2F|3F|3A|40|26|3D|2B|24|23|25)'));
 var $elm$url$Url$percentDecode = _Url_percentDecode;
-var $elm$url$Url$percentEncode = _Url_percentEncode;
 var $dillonkearns$elm_markdown$Markdown$InlineParser$encodeUrl = A2(
 	$elm$core$Basics$composeR,
 	$elm$url$Url$percentEncode,
