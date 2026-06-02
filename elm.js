@@ -19237,9 +19237,7 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$render = F2(
 var $author$project$Main$parseMarkdown = function (rawMarkdown) {
 	var _v0 = A2(
 		$elm$core$Result$andThen,
-		function (ast) {
-			return A2($dillonkearns$elm_markdown$Markdown$Renderer$render, $author$project$Main$customRenderer, ast);
-		},
+		$dillonkearns$elm_markdown$Markdown$Renderer$render($author$project$Main$customRenderer),
 		A2(
 			$elm$core$Result$mapError,
 			A2(
