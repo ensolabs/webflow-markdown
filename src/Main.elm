@@ -11,6 +11,7 @@ import Markdown.Parser as Markdown
 import Markdown.Renderer
 import Process
 import Task
+import Url exposing (percentEncode)
 
 
 
@@ -161,11 +162,11 @@ view title model =
     , body =
         [ Lazy.lazy stylesheetOverride model.addStylesheetOverride
         , appContainer
-            [ logoSection model
+            [ logoSection
             , headerSection model
             , mainContent model
             , copySuccessToast model.showCopySuccess
-            , footerSection model
+            , footerSection
             ]
         ]
     }
@@ -180,14 +181,14 @@ appContainer content =
     Html.div [ Attr.class "flex flex-col h-screen bg-gray-50" ] content
 
 
-logoSection : Model -> Html Msg
-logoSection model =
+logoSection : Html Msg
+logoSection =
     Html.div [ Attr.class "bg-white p-2 pb-4 " ]
         [ Html.img [ Attr.src "Logo.svg", Attr.width 100 ] [] ]
 
 
-footerSection : Model -> Html Msg
-footerSection model =
+footerSection : Html Msg
+footerSection =
     Html.div [ Attr.class "text-center text-sm pt-4" ]
         [ Html.a [ Attr.href "https://enso.no", Attr.target "_blank" ] [ Html.text "Made with ❤️ by Ensō" ] ]
 
@@ -325,32 +326,21 @@ customRenderer =
         | codeBlock =
             \{ body, language } ->
                 let
-                    syntaxClasses : List (Html.Attribute msg)
-                    syntaxClasses =
-                        case Maybe.map String.words language of
-                            Just (actualLanguage :: _) ->
-                                [ Attr.class <| "language-" ++ actualLanguage ]
+                    lang =
+                        case language of
+                            Just l ->
+                                "&lang=" ++ l
 
-                            _ ->
-                                []
+                            Nothing ->
+                                ""
+
+                    src =
+                        "https://codimg.alwaysdata.net/code.svg?input="
+                            ++ percentEncode body
+                            ++ lang
                 in
-                Html.pre []
-                    [ Html.code syntaxClasses
-                        [ Html.text body
-                        ]
-                    ]
+                Html.img [ Attr.src src ] []
     }
-
-
-webflowCodePreAttrs : List (Html.Attribute msg)
-webflowCodePreAttrs =
-    -- I wish this worked, but it's ignored by webflow:
-    [ Attr.style "overflow-x" "auto"
-    , Attr.style "background" "rgb(43,43,43)"
-    , Attr.style "color" "rgb(248,248,242)"
-    , Attr.style "padding" "0.5em"
-    , Attr.class "w-code-block"
-    ]
 
 
 copySuccessToast : Bool -> Html msg
