@@ -4547,6 +4547,23 @@ function _Http_track(router, xhr, tracker)
 	});
 }
 
+function _Url_percentEncode(string)
+{
+	return encodeURIComponent(string);
+}
+
+function _Url_percentDecode(string)
+{
+	try
+	{
+		return $elm$core$Maybe$Just(decodeURIComponent(string));
+	}
+	catch (e)
+	{
+		return $elm$core$Maybe$Nothing;
+	}
+}
+
 
 
 // STRINGS
@@ -4813,24 +4830,7 @@ var _Regex_splitAtMost = F3(function(n, re, str)
 });
 
 var _Regex_infinity = Infinity;
-
-
-function _Url_percentEncode(string)
-{
-	return encodeURIComponent(string);
-}
-
-function _Url_percentDecode(string)
-{
-	try
-	{
-		return $elm$core$Maybe$Just(decodeURIComponent(string));
-	}
-	catch (e)
-	{
-		return $elm$core$Maybe$Nothing;
-	}
-}var $elm$core$Basics$EQ = 1;
+var $elm$core$Basics$EQ = 1;
 var $elm$core$Basics$GT = 2;
 var $elm$core$Basics$LT = 0;
 var $elm$core$List$cons = _List_cons;
@@ -6554,28 +6554,26 @@ var $elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
-var $author$project$Main$footerSection = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('text-center text-sm pt-4')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$href('https://enso.no'),
-						$elm$html$Html$Attributes$target('_blank')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Made with ❤️ by Ensō')
-					]))
-			]));
-};
+var $author$project$Main$footerSection = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('text-center text-sm pt-4')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href('https://enso.no'),
+					$elm$html$Html$Attributes$target('_blank')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Made with ❤️ by Ensō')
+				]))
+		]));
 var $author$project$Main$ToggleEditor = {$: 8};
 var $author$project$Main$ToggleStylesheetOverride = {$: 7};
 var $author$project$Main$UpdateContentClassName = function (a) {
@@ -6773,25 +6771,23 @@ var $elm$html$Html$Attributes$width = function (n) {
 		'width',
 		$elm$core$String$fromInt(n));
 };
-var $author$project$Main$logoSection = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('bg-white p-2 pb-4 ')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$img,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$src('Logo.svg'),
-						$elm$html$Html$Attributes$width(100)
-					]),
-				_List_Nil)
-			]));
-};
+var $author$project$Main$logoSection = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('bg-white p-2 pb-4 ')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$img,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$src('Logo.svg'),
+					$elm$html$Html$Attributes$width(100)
+				]),
+			_List_Nil)
+		]));
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $author$project$Main$columnPanel = F2(
 	function (title, content) {
@@ -6835,7 +6831,6 @@ var $elm$core$Result$andThen = F2(
 			return $elm$core$Result$Err(msg);
 		}
 	});
-var $elm$html$Html$code = _VirtualDom_node('code');
 var $elm$html$Html$Attributes$align = $elm$html$Html$Attributes$stringProperty('align');
 var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
 var $elm$html$Html$blockquote = _VirtualDom_node('blockquote');
@@ -6849,6 +6844,7 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
+var $elm$html$Html$code = _VirtualDom_node('code');
 var $elm$html$Html$del = _VirtualDom_node('del');
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$em = _VirtualDom_node('em');
@@ -7228,6 +7224,7 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer = {
 				items));
 	}
 };
+var $elm$url$Url$percentEncode = _Url_percentEncode;
 var $author$project$Main$customRenderer = function () {
 	var _default = $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer;
 	return _Utils_update(
@@ -7236,32 +7233,22 @@ var $author$project$Main$customRenderer = function () {
 			bI: function (_v0) {
 				var body = _v0.aQ;
 				var language = _v0.bV;
-				var syntaxClasses = function () {
-					var _v1 = A2($elm$core$Maybe$map, $elm$core$String$words, language);
-					if ((!_v1.$) && _v1.a.b) {
-						var _v2 = _v1.a;
-						var actualLanguage = _v2.a;
-						return _List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('language-' + actualLanguage)
-							]);
+				var lang = function () {
+					if (!language.$) {
+						var l = language.a;
+						return '&lang=' + l;
 					} else {
-						return _List_Nil;
+						return '';
 					}
 				}();
+				var src = 'https://codimg.alwaysdata.net/code.svg?input=' + ($elm$url$Url$percentEncode(body) + lang);
 				return A2(
-					$elm$html$Html$pre,
-					_List_Nil,
+					$elm$html$Html$img,
 					_List_fromArray(
 						[
-							A2(
-							$elm$html$Html$code,
-							syntaxClasses,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(body)
-								]))
-						]));
+							$elm$html$Html$Attributes$src(src)
+						]),
+					_List_Nil);
 			}
 		});
 }();
@@ -10380,7 +10367,6 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$decodeUrlRegex = A2(
 	$elm$regex$Regex$never,
 	$elm$regex$Regex$fromString('%(?:3B|2C|2F|3F|3A|40|26|3D|2B|24|23|25)'));
 var $elm$url$Url$percentDecode = _Url_percentDecode;
-var $elm$url$Url$percentEncode = _Url_percentEncode;
 var $dillonkearns$elm_markdown$Markdown$InlineParser$encodeUrl = A2(
 	$elm$core$Basics$composeR,
 	$elm$url$Url$percentEncode,
@@ -15821,11 +15807,11 @@ var $author$project$Main$view = F2(
 					$author$project$Main$appContainer(
 					_List_fromArray(
 						[
-							$author$project$Main$logoSection(model),
+							$author$project$Main$logoSection,
 							$author$project$Main$headerSection(model),
 							$author$project$Main$mainContent(model),
 							$author$project$Main$copySuccessToast(model.N),
-							$author$project$Main$footerSection(model)
+							$author$project$Main$footerSection
 						]))
 				]),
 			cf: title
