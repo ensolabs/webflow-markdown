@@ -339,7 +339,7 @@ customRenderer =
 
                     src =
                         "https://codimg.alwaysdata.net/code.svg?input="
-                            --                        "http://localhost:8100/code.svg?input="
+                            --  "http://localhost:8100/code.svg?input="
                             ++ encodeCodeBlock body
                             ++ lang
                 in
@@ -354,7 +354,7 @@ encodeCodeBlock =
         >> Flate.deflate
         >> Base64.fromBytes
         >> Maybe.withDefault "invalid data"
-        >> String.replace "+" "_"
+        >> Url.percentEncode
 
 
 copySuccessToast : Bool -> Html msg
