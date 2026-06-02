@@ -1,7 +1,10 @@
 port module Main exposing (main)
 
+import Base64
 import Browser exposing (Document)
+import Bytes.Encode as Encode
 import Constants exposing (htmlOutputId, stylesheetOverrideContent)
+import Flate
 import Html exposing (Html)
 import Html.Attributes as Attr
 import Html.Events as Events
@@ -11,7 +14,7 @@ import Markdown.Parser as Markdown
 import Markdown.Renderer
 import Process
 import Task
-import Url exposing (percentEncode)
+import Url
 
 
 
@@ -336,11 +339,22 @@ customRenderer =
 
                     src =
                         "https://codimg.alwaysdata.net/code.svg?input="
-                            ++ percentEncode body
+                            --                        "http://localhost:8100/code.svg?input="
+                            ++ encodeCodeBlock body
                             ++ lang
                 in
                 Html.img [ Attr.src src ] []
     }
+
+
+encodeCodeBlock : String -> String
+encodeCodeBlock =
+    Encode.string
+        >> Encode.encode
+        >> Flate.deflate
+        >> Base64.fromBytes
+        >> Maybe.withDefault "invalid data"
+        >> String.replace "+" "_"
 
 
 copySuccessToast : Bool -> Html msg
