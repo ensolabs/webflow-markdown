@@ -139,7 +139,7 @@ The project is set up to automatically deploy to GitHub Pages when changes are p
 ## Built With
 
 - [Elm](https://elm-lang.org/) - A delightful language for reliable web applications
-- [pablohirafuji/elm-markdown](https://package.elm-lang.org/packages/pablohirafuji/elm-markdown/latest/) - Markdown parsing in Elm
+- [dillonkearns/elm-markdown](https://package.elm-lang.org/packages/dillonkearns/elm-markdown/latest/) - Markdown parsing in Elm
 
 ## License
 
